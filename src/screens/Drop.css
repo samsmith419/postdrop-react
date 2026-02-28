@@ -1,0 +1,143 @@
+.drop-screen {
+  position: fixed;
+  inset: 0;
+  background: #1a2744;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  padding: 30px 24px 40px;
+  z-index: 50;
+  animation: fadeIn 0.4s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+.drop-hint {
+  color: rgba(255, 255, 255, 0.55);
+  font-size: 13px;
+  text-align: center;
+  transition: color 0.3s;
+}
+
+.drop-hint.near {
+  color: #FF6600;
+  font-weight: 700;
+}
+
+/* Mini postcard to drag */
+.drag-card {
+  width: 260px;
+  height: 150px;
+  background: #fdf6e3;
+  border-radius: 10px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+  display: flex;
+  overflow: hidden;
+  cursor: grab;
+  touch-action: none;
+  user-select: none;
+  transition: box-shadow 0.2s;
+}
+
+.drag-card:active,
+.drag-card.dragging {
+  cursor: grabbing;
+  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.7);
+}
+
+.dc-photo {
+  width: 45%;
+  position: relative;
+  overflow: hidden;
+  flex-shrink: 0;
+  background: linear-gradient(135deg, #667eea, #764ba2);
+}
+
+.dc-photo img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.dc-photo .no-ph {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 26px;
+  opacity: 0.6;
+}
+
+.dc-right {
+  flex: 1;
+  padding: 8px 10px;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+}
+
+.dc-stamp {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  width: 26px;
+  height: 32px;
+  border: 1.5px solid #999;
+  border-radius: 1px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  background: #fff;
+}
+
+.dc-lines {
+  flex: 1;
+  background-image: repeating-linear-gradient(
+    transparent,
+    transparent 14px,
+    #e0d8c8 14px,
+    #e0d8c8 15px
+  );
+  background-size: 100% 15px;
+}
+
+.dc-addr {
+  font-size: 9px;
+  color: #aaa;
+  padding-top: 3px;
+  border-top: 1px solid #ddd;
+}
+
+/* Mailbox drop target */
+.drop-box {
+  width: 170px;
+  height: 220px;
+  position: relative;
+  transition: filter 0.25s;
+}
+
+.drop-box.glow {
+  filter: drop-shadow(0 0 18px rgba(255, 102, 0, 0.9));
+}
+
+.drop-box svg {
+  width: 100%;
+  height: 100%;
+}
+
+.slot-hit {
+  position: absolute;
+  top: 44%;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 110px;
+  height: 30px;
+}
