@@ -6,13 +6,25 @@
 
 body {
   font-family: 'Lato', sans-serif;
-  background: #1a2744;
+  background: radial-gradient(ellipse at 50% 40%, #1e2f5c 0%, #111827 100%);
   min-height: 100vh;
   display: flex;
   align-items: center;
   justify-content: center;
   padding: 20px 16px;
   touch-action: manipulation;
+  position: relative;
+}
+
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  opacity: 0.045;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-repeat: repeat;
 }
 
 #root {
@@ -32,23 +44,37 @@ body {
   font-size: 15px;
   font-weight: 700;
   cursor: pointer;
-  transition: background 0.2s, transform 0.1s;
+  transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
   width: 100%;
   margin-top: 10px;
+  box-shadow: 0 4px 14px rgba(255, 102, 0, 0.25);
 }
 
 .btn:hover {
   background: #e05500;
-  transform: translateY(-1px);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(255, 102, 0, 0.4);
+}
+
+.btn:active {
+  transform: scale(0.97) translateY(0);
+  box-shadow: 0 2px 8px rgba(255, 102, 0, 0.2);
 }
 
 .btn-ghost {
   background: transparent;
   border: 2px solid #FF6600;
   color: #FF6600;
+  box-shadow: none;
 }
 
 .btn-ghost:hover {
   background: rgba(255, 102, 0, 0.1);
-  transform: translateY(-1px);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(255, 102, 0, 0.2);
+}
+
+.btn-ghost:active {
+  transform: scale(0.97) translateY(0);
+  box-shadow: none;
 }
