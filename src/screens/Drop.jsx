@@ -8,7 +8,6 @@ export default function Drop() {
   const { lang, photoDataUrl, recipientName, setScreen } = useApp();
   const cardRef = useRef(null);
   const boxRef = useRef(null);
-  const wrapperRef = useRef(null);
   const slotRef = useRef(null);
   const flapRef = useRef(null);
   const [isNear, setIsNear] = useState(false);
@@ -84,36 +83,27 @@ export default function Drop() {
         box.style.animation = 'none';
 
         const slotCenterX = s.left + s.width / 2;
-        const slotTop = s.top;
+        const slotCenterY = s.top + s.height / 2;
 
-        // Phase 1: card tilts forward (rotateX) like falling flat toward slot
-        card.style.transition = 'all 0.5s cubic-bezier(0.4, 0, 0.55, 1)';
-        card.style.transformOrigin = 'center bottom';
+        // Phase 1: slide to align with slot center + begin tilting flat (rotateX)
+        card.style.transition = 'left 0.35s ease-out, top 0.35s ease-out, transform 0.45s cubic-bezier(0.4,0,0.55,1)';
+        card.style.transformOrigin = 'center center';
         card.style.left = (slotCenterX - card.offsetWidth / 2) + 'px';
-        card.style.top = (slotTop - card.offsetHeight * 0.85) + 'px';
-        card.style.transform = 'perspective(700px) rotateX(72deg)';
+        card.style.top = (slotCenterY - card.offsetHeight / 2) + 'px';
+        card.style.transform = 'perspective(700px) rotateX(72deg) scale(0.92)';
         card.style.opacity = '1';
 
-        // Phase 2: card fully flat, glides into the slot
+        // Phase 2: fully flat + slide into slot (depth via scale + opacity)
         setTimeout(() => {
-          card.style.transition = 'top 0.38s ease-in, transform 0.38s ease-in, opacity 0.2s ease-in 0.2s';
-          card.style.top = (slotTop - 4) + 'px';
-          card.style.transform = 'perspective(700px) rotateX(88deg) scaleX(0.85)';
+          card.style.transition = 'transform 0.32s ease-in, opacity 0.28s ease-in';
+          card.style.transform = 'perspective(700px) rotateX(90deg) scale(0.82)';
           card.style.opacity = '0';
-        }, 460);
-
-        // Phase 3: wrapper rises
-        const wrapper = wrapperRef.current;
-        if (wrapper) {
-          setTimeout(() => {
-            wrapper.style.transform = 'translateY(-35%)';
-          }, 640);
-        }
+        }, 430);
 
         setTimeout(() => {
           card.style.display = 'none';
           setScreen('done');
-        }, 1500);
+        }, 1050);
       } else {
         // Snap back
         card.style.transition = 'all .4s cubic-bezier(.175,.885,.32,1.275)';
@@ -169,7 +159,7 @@ export default function Drop() {
 
       <div className={`drop-arrow${isDragging || isNear ? ' hidden' : ''}`} aria-hidden="true">↓</div>
 
-      <div ref={wrapperRef} className="mailbox-wrapper">
+      <div className="mailbox-wrapper">
       <div ref={boxRef} className="drop-box">
         <MailboxSVG flapRef={flapRef} />
         <div ref={slotRef} className="slot-hit" />
