@@ -13,7 +13,12 @@ export default function PostcardBack({ animClass }) {
           maxLength={150}
           placeholder={T[lang].msgPh}
           value={message}
-          onChange={(e) => setMessage(e.target.value)}
+          onChange={(e) => {
+            const lines = e.target.value.split('\n');
+            if (lines.length > 4) return;
+            if (e.target.value.length > 150) return;
+            setMessage(e.target.value);
+          }}
         />
         <div className="pc-counter"><span>{message.length}</span>/150</div>
         <div className="pc-to">

@@ -2,11 +2,13 @@ import { useRef, useEffect, useState } from 'react';
 import './Drop.css';
 import T from '../i18n';
 import { useApp } from '../context';
+import MailboxSVG from '../components/MailboxSVG';
 
 export default function Drop() {
   const { lang, photoDataUrl, recipientName, setScreen } = useApp();
   const cardRef = useRef(null);
   const boxRef = useRef(null);
+  const wrapperRef = useRef(null);
   const slotRef = useRef(null);
   const flapRef = useRef(null);
   const [isNear, setIsNear] = useState(false);
@@ -50,6 +52,7 @@ export default function Drop() {
       const r = card.getBoundingClientRect();
       ox = pt.clientX - r.left - r.width / 2;
       oy = pt.clientY - r.top - r.height / 2;
+
     }
 
     function onMove(e) {
@@ -74,28 +77,43 @@ export default function Drop() {
       if (nearSlot()) {
         dropped = true;
         const s = slotRect();
-        card.style.transition = 'all .45s cubic-bezier(.4,0,.8,.6)';
-        card.style.left = (s.left + s.width / 2 - card.offsetWidth / 2) + 'px';
-        card.style.top = (s.top - card.offsetHeight / 2) + 'px';
-        card.style.transform = 'scale(0.1) rotate(-4deg)';
-        card.style.opacity = '0';
-        if (flap) flap.style.transform = 'scaleY(1)';
         if (navigator.vibrate) navigator.vibrate([25, 15, 50]);
+        if (flap) flap.style.transform = 'scaleY(0.1)';
 
-        // Mailbox shake
+        // Stop pulse
+        box.style.animation = 'none';
+
+        const slotCenterX = s.left + s.width / 2;
+        const slotTop = s.top;
+
+        // Phase 1: card tilts forward (rotateX) like falling flat toward slot
+        card.style.transition = 'all 0.5s cubic-bezier(0.4, 0, 0.55, 1)';
+        card.style.transformOrigin = 'center bottom';
+        card.style.left = (slotCenterX - card.offsetWidth / 2) + 'px';
+        card.style.top = (slotTop - card.offsetHeight * 0.85) + 'px';
+        card.style.transform = 'perspective(700px) rotateX(72deg)';
+        card.style.opacity = '1';
+
+        // Phase 2: card fully flat, glides into the slot
         setTimeout(() => {
-          [0, 1, 2, 3].forEach((i) => {
-            setTimeout(() => {
-              box.style.transform = `translateX(${i % 2 ? 3 : -3}px)`;
-            }, i * 55);
-          });
-          setTimeout(() => { box.style.transform = ''; }, 220);
-        }, 380);
+          card.style.transition = 'top 0.38s ease-in, transform 0.38s ease-in, opacity 0.2s ease-in 0.2s';
+          card.style.top = (slotTop - 4) + 'px';
+          card.style.transform = 'perspective(700px) rotateX(88deg) scaleX(0.85)';
+          card.style.opacity = '0';
+        }, 460);
+
+        // Phase 3: wrapper rises
+        const wrapper = wrapperRef.current;
+        if (wrapper) {
+          setTimeout(() => {
+            wrapper.style.transform = 'translateY(-35%)';
+          }, 640);
+        }
 
         setTimeout(() => {
           card.style.display = 'none';
           setScreen('done');
-        }, 870);
+        }, 1500);
       } else {
         // Snap back
         card.style.transition = 'all .4s cubic-bezier(.175,.885,.32,1.275)';
@@ -108,6 +126,7 @@ export default function Drop() {
         box.classList.remove('glow');
         if (flap) flap.style.transform = '';
         setIsNear(false);
+
       }
     }
 
@@ -148,27 +167,13 @@ export default function Drop() {
         </div>
       </div>
 
+      <div className={`drop-arrow${isDragging || isNear ? ' hidden' : ''}`} aria-hidden="true">↓</div>
+
+      <div ref={wrapperRef} className="mailbox-wrapper">
       <div ref={boxRef} className="drop-box">
-        <svg viewBox="0 0 200 260" fill="none">
-          <rect x="88" y="200" width="24" height="56" rx="4" fill="#cc4400" />
-          <rect x="20" y="80" width="160" height="130" rx="14" fill="#FF6600" />
-          <ellipse cx="100" cy="80" rx="80" ry="20" fill="#e55500" />
-          <rect x="35" y="100" width="130" height="90" rx="8" fill="#e55500" />
-          <rect x="50" y="125" width="100" height="12" rx="6" fill="#1a1a1a" />
-          <rect x="45" y="150" width="110" height="24" rx="4" fill="#fff" opacity=".15" />
-          <text x="100" y="166" textAnchor="middle" fontFamily="Arial" fontSize="9" fontWeight="bold" fill="#fff" letterSpacing="1">ČESKÁ POŠTA</text>
-          <circle cx="45" cy="110" r="4" fill="#cc4400" />
-          <circle cx="155" cy="110" r="4" fill="#cc4400" />
-          <rect x="88" y="185" width="24" height="14" rx="4" fill="#cc4400" />
-          <circle cx="100" cy="185" r="5" fill="#e55500" />
-          <rect
-            ref={flapRef}
-            x="50" y="118" width="100" height="10" rx="5" fill="#cc4400"
-            style={{ transformOrigin: '100px 118px', transition: 'transform 0.2s' }}
-          />
-          <ellipse cx="70" cy="95" rx="20" ry="6" fill="#fff" opacity=".1" transform="rotate(-20 70 95)" />
-        </svg>
+        <MailboxSVG flapRef={flapRef} />
         <div ref={slotRef} className="slot-hit" />
+      </div>
       </div>
     </div>
   );

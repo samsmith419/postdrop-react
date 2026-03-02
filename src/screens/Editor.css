@@ -15,22 +15,30 @@
 
 .editor-title {
   font-family: 'Playfair Display', serif;
-  color: #fff;
-  font-size: 20px;
+  font-weight: 700;
+  color: #dce6f5;
+  font-size: 22px;
   text-align: center;
+  letter-spacing: -0.3px;
 }
 
 /* ── POSTCARD SCENE ── */
 .pc-scene {
   width: 100%;
   position: relative;
+  display: flex;
+  flex-direction: column;
 }
 
 .pc-face {
   width: 100%;
-  border-radius: 12px;
+  height: 210px;
+  border-radius: 6px;
   overflow: hidden;
-  box-shadow: 0 8px 28px rgba(0, 0, 0, 0.4);
+  box-shadow:
+    0 2px 0 rgba(0,0,0,0.15),
+    0 6px 16px rgba(0,0,0,0.35),
+    0 18px 40px rgba(0,0,0,0.25);
 }
 
 .pc-face.hidden {
@@ -51,13 +59,72 @@
 
 /* Front */
 .pc-front {
-  background: linear-gradient(135deg, #667eea, #764ba2);
+  /* 米色紙張底 + 細斜紋模擬紙張纖維 */
+  background-color: #ede8db;
+  background-image:
+    repeating-linear-gradient(
+      108deg,
+      transparent        0px,
+      transparent        3px,
+      rgba(0,0,0,0.018) 3px,
+      rgba(0,0,0,0.018) 4px
+    ),
+    repeating-linear-gradient(
+      18deg,
+      transparent        0px,
+      transparent        5px,
+      rgba(0,0,0,0.010) 5px,
+      rgba(0,0,0,0.010) 6px
+    );
+  box-shadow: inset 0 0 0 1px rgba(0,0,0,0.07), 0 8px 28px rgba(0,0,0,0.4);
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
   position: relative;
   height: 210px;
+  overflow: hidden;
+}
+
+/* 四個角落的照片角扣（純 CSS） */
+.pc-front::before,
+.pc-front::after {
+  content: '';
+  position: absolute;
+  width: 18px;
+  height: 18px;
+  pointer-events: none;
+  z-index: 2;
+}
+.pc-front::before {
+  top: 10px; left: 10px;
+  border-top: 2px solid rgba(100,70,30,0.35);
+  border-left: 2px solid rgba(100,70,30,0.35);
+}
+.pc-front::after {
+  bottom: 10px; right: 10px;
+  border-bottom: 2px solid rgba(100,70,30,0.35);
+  border-right: 2px solid rgba(100,70,30,0.35);
+}
+
+/* 右上 + 左下角扣（用 .pc-front 內的 span 不干淨，改用 outline-ish sibling） */
+.pc-corner-tr,
+.pc-corner-bl {
+  position: absolute;
+  width: 18px;
+  height: 18px;
+  pointer-events: none;
+  z-index: 2;
+}
+.pc-corner-tr {
+  top: 10px; right: 10px;
+  border-top: 2px solid rgba(100,70,30,0.35);
+  border-right: 2px solid rgba(100,70,30,0.35);
+}
+.pc-corner-bl {
+  bottom: 10px; left: 10px;
+  border-bottom: 2px solid rgba(100,70,30,0.35);
+  border-left: 2px solid rgba(100,70,30,0.35);
 }
 
 .pc-front img.photo {
@@ -68,32 +135,53 @@
   object-fit: cover;
 }
 
+/* 空白佔位提示 */
 .pc-photo-hint {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 8px;
-  color: #fff;
-  opacity: 0.85;
+  gap: 10px;
   pointer-events: none;
   position: relative;
   z-index: 1;
 }
 
-.pc-photo-hint .cam { font-size: 38px; }
-.pc-photo-hint .lbl { font-size: 12px; font-weight: 600; }
+.pc-photo-hint .cam-frame {
+  width: 52px;
+  height: 52px;
+  border: 1.5px dashed rgba(100,70,30,0.4);
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255,255,255,0.35);
+}
+
+.pc-photo-hint .cam-frame svg {
+  opacity: 0.55;
+}
+
+.pc-photo-hint .lbl {
+  font-family: 'Lato', sans-serif;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.8px;
+  text-transform: uppercase;
+  color: rgba(80,55,25,0.6);
+}
 
 .pc-retake {
   position: absolute;
   bottom: 10px;
   right: 10px;
-  background: rgba(0, 0, 0, 0.55);
+  background: rgba(0, 0, 0, 0.45);
   color: #fff;
   border: none;
   border-radius: 16px;
   padding: 5px 12px;
   font-size: 11px;
   font-weight: 700;
+  letter-spacing: 0.3px;
   cursor: pointer;
   z-index: 2;
   opacity: 0;
@@ -105,6 +193,7 @@
 .pc-back {
   background: #fdf6e3;
   display: flex;
+  height: 210px;
 }
 
 .pc-stripe {
@@ -151,7 +240,9 @@
 
 .pc-content textarea {
   flex: 1;
-  min-height: 90px;
+  height: 100px;
+  max-height: 100px;
+  overflow: hidden;
   border: none;
   background: transparent;
   font-family: 'Lato', sans-serif;
@@ -159,7 +250,8 @@
   color: #333;
   resize: none;
   outline: none;
-  line-height: 1.85;
+  line-height: 25px;
+  padding-top: 1px;
   padding-right: 46px;
   background-image: repeating-linear-gradient(
     transparent,
@@ -199,20 +291,24 @@
 
 /* Flip pill */
 .flip-pill {
-  background: rgba(255, 255, 255, 0.08);
-  border: 1px solid rgba(255, 255, 255, 0.18);
-  color: rgba(255, 255, 255, 0.65);
+  background: rgba(255, 255, 255, 0.07);
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  color: rgba(255, 255, 255, 0.6);
   border-radius: 20px;
-  padding: 6px 16px;
+  padding: 7px 18px;
   font-size: 11px;
   font-weight: 700;
+  letter-spacing: 0.5px;
   cursor: pointer;
   transition: all 0.2s;
   white-space: nowrap;
   align-self: center;
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
 }
 
 .flip-pill:hover {
-  background: rgba(255, 255, 255, 0.15);
+  background: rgba(255, 255, 255, 0.13);
+  border-color: rgba(255, 255, 255, 0.28);
   color: #fff;
 }
